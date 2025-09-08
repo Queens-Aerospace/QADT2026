@@ -51,7 +51,7 @@ docker rm qadt_cont
 With ROS2 installed on your system, navigate to `ros_examples_cpp` and enter the command:
 
 ```bash
-colcon build
+colcon build && source install/setup.sh
 ```
 
 To build all packages under the `QADT2026/ros_examples_cpp/src` directory. Then run `ros2 run [pkg_name] [executable_name]`. For example, in one terminal instance run, `ros2 run service_02 server`, and in another terminal instance run, `ros2 run service_02 client`.
