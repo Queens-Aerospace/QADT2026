@@ -4,11 +4,9 @@ The purpose of this repository is to house all software associated with developm
 
 ## Docker container setup
 
-Install docker if not done already
-https://docs.docker.com/engine/install/ubuntu/
+[Install docker if not done already](https://docs.docker.com/engine/install/ubuntu/)
 
-Also setup managing docker as a non root user for ease of use
-https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
+[Also setup managing docker as a non root user for ease of use](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 To allow X11 forwarding and see the UI for your session enter this command:
 
