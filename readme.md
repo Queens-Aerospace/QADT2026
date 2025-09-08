@@ -26,7 +26,7 @@ Next step is to build the dockerfile into an image which can be done by navigati
 docker build -t qadt_image .
 ```
 
-Then the image can be ran using the following. This is for the first run only:
+Then the image can be ran using the following. This is for the ***first run only***:
 ```bash
 ./run.sh
 ```
