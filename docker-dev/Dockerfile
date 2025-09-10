@@ -16,9 +16,10 @@ SHELL ["/bin/bash", "-c"]
 # --------------------------
 
 # Update and install necessary dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     wget \
+	curl \
     astyle \
 	build-essential \
 	ccache \
@@ -44,6 +45,8 @@ RUN apt-get update && \
 	shellcheck \
 	unzip \
 	zip \
+	vim \
+	tmux \
     # Put extra apt packages here for example:
     # ros-humble-rmw-fastrtps-cpp \
     && rm -rf /var/lib/apt/lists/*
@@ -55,14 +58,11 @@ RUN apt-get update && \
 # Create your workspace here
 WORKDIR $HOME_DIR
 
-# Clone QADT 2026 repository
-RUN git clone https://github.com/Queens-Aerospace/QADT2026.git
-
-# MicroDDS adapted from https://docs.px4.io/main/en/ros2/user_guide
+# Clone MicroDDS. Adapted from https://docs.px4.io/main/en/ros2/user_guide
 # NOTE: Used to be v2.4.2 but updating to v2.4.3 as v2.4.2 had issues with docker build.
 # Build MicroDDS using cmake via Unix Makefiles generator. '-j $(nproc)' will use all processors to speed up build times.
-RUN git clone -b v2.4.3 https://github.com/eProsima/Micro-XRCE-DDS-Agent.git --depth 1 \
-	&& cmake -S Micro-XRCE-DDS-Agent -B Micro-XRCE-DDS-Agent/build -G "Unix Makefiles" \
+RUN git clone --branch v2.4.3 https://github.com/eProsima/Micro-XRCE-DDS-Agent.git --depth 1 \
+	&& cmake -S Micro-XRCE-DDS-Agent -B Micro-XRCE-DDS-Agent/build -G "Ninja" \
     && cmake --build Micro-XRCE-DDS-Agent/build -j $(nproc) \
     && cmake --install Micro-XRCE-DDS-Agent/build \
     && ldconfig \
@@ -75,10 +75,11 @@ RUN bash px4_ubuntu.sh
 
 # Run the setup and build for PX4
 RUN git clone --branch v1.16.0 --single-branch https://github.com/PX4/PX4-Autopilot.git --depth 1 \
-	# &&  \
-	# && pip3 install --no-cache-dir -r requirements.txt \ 
 	&& make -C PX4-Autopilot \
 	&& rm -rf PX4-Autopilot/build
+
+# Clone QADT 2026 repository
+RUN git clone https://github.com/Queens-Aerospace/QADT2026.git
 
 # --------------------------
 # Entrypoint and User
@@ -93,11 +94,17 @@ RUN useradd -ms /bin/bash qadt && \
     # && chmod 0440 /etc/sudoers.d/qadt
 	
 # Copy files in the dockerfile's directory into the container
-COPY . .
- 
+COPY .bashrc \
+	.profile \
+	entrypoint.sh \
+	.
+
 # Make user 'qadt' own all files in home directory
 RUN chown -R qadt:qadt $HOME_DIR \
 	&& chmod +x $HOME_DIR/entrypoint.sh
+
+# Access to man packages. 'yes' answers the interactive prompts automatically
+RUN yes | unminimize && apt-get install -y man-db less
 
 # Switch to user and run entry point
 USER qadt
