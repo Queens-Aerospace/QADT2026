@@ -68,15 +68,15 @@ RUN git clone -b v2.4.3 https://github.com/eProsima/Micro-XRCE-DDS-Agent.git --d
     && ldconfig \
 	&& rm -rf Micro-XRCE-DDS-Agent/build
 
-# Copy files in the same directory into the container
-COPY . .
+# Effectively copied 'px4_ubuntu.sh' from "bash ./Tools/setup/ubuntu.sh" above
+# Python dependencies in requirements.txt
+COPY px4_ubuntu.sh requirements.txt .
+RUN bash px4_ubuntu.sh 
 
 # Run the setup and build for PX4
-# Effectively copied 'px4_ubuntu.sh' from "bash ./Tools/setup/ubuntu.sh" above
-# Python dependencies in requirements .txt
-RUN git clone --branch v1.16.0 --single-branch https://github.com/PX4/PX4-Autopilot.git --recursive --depth 1 \
-	&& bash px4_ubuntu.sh \
-	&& pip3 install --no-cache-dir -r requirements.txt \ 
+RUN git clone --branch v1.16.0 --single-branch https://github.com/PX4/PX4-Autopilot.git --depth 1 \
+	# &&  \
+	# && pip3 install --no-cache-dir -r requirements.txt \ 
 	&& make -C PX4-Autopilot \
 	&& rm -rf PX4-Autopilot/build
 
@@ -85,17 +85,21 @@ RUN git clone --branch v1.16.0 --single-branch https://github.com/PX4/PX4-Autopi
 # --------------------------
 
 # Add new user 'qadt'
-# RUN useradd -ms /bin/bash qadt && \
-#     echo "qadt:aero" | chpasswd && \
-#     usermod -aG sudo qadt 
+RUN useradd -ms /bin/bash qadt && \
+    echo "qadt:aero" | chpasswd && \
+    usermod -aG sudo qadt 
 	# Uncomment if you want sudo access without a password
 	# && echo "qadt ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/qadt \
     # && chmod 0440 /etc/sudoers.d/qadt
 	
-# RUN chown -R qadt:qadt $HOME_DIR
-# USER qadt
-	
-RUN chmod +x $HOME_DIR/entrypoint.sh
+# Copy files in the dockerfile's directory into the container
+COPY . .
+ 
+# Make user 'qadt' own all files in home directory
+RUN chown -R qadt:qadt $HOME_DIR \
+	&& chmod +x $HOME_DIR/entrypoint.sh
 
-ENTRYPOINT [ "$HOME_DIR/entrypoint.sh" ]
+# Switch to user and run entry point
+USER qadt
+ENTRYPOINT [ "/home/qadt/entrypoint.sh" ]
 CMD [ "bash" ]
