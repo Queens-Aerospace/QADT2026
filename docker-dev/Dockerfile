@@ -60,7 +60,7 @@ WORKDIR $HOME_DIR
 
 # Clone MicroDDS. Adapted from https://docs.px4.io/main/en/ros2/user_guide
 # NOTE: Used to be v2.4.2 but updating to v2.4.3 as v2.4.2 had issues with docker build.
-# Build MicroDDS using cmake via Unix Makefiles generator. '-j $(nproc)' will use all processors to speed up build times.
+# Build MicroDDS using cmake via the ninja-build generator. '-j $(nproc)' will use all processors to speed up build times.
 RUN git clone --branch v2.4.3 https://github.com/eProsima/Micro-XRCE-DDS-Agent.git --depth 1 \
 	&& cmake -S Micro-XRCE-DDS-Agent -B Micro-XRCE-DDS-Agent/build -G "Ninja" \
     && cmake --build Micro-XRCE-DDS-Agent/build -j $(nproc) \
@@ -71,11 +71,12 @@ RUN git clone --branch v2.4.3 https://github.com/eProsima/Micro-XRCE-DDS-Agent.g
 # Effectively copied 'px4_ubuntu.sh' from "bash ./Tools/setup/ubuntu.sh" above
 # Python dependencies in requirements.txt
 COPY px4_ubuntu.sh requirements.txt .
-RUN bash px4_ubuntu.sh 
+RUN bash px4_ubuntu.sh \
+	&& pip3 install -r requirements.txt
 
 # Run the setup and build for PX4
 RUN git clone --branch v1.16.0 --single-branch https://github.com/PX4/PX4-Autopilot.git --depth 1 \
-	&& make -C PX4-Autopilot \
+	&& make -C PX4-Autopilot px4_sitl gz_x500 \
 	&& rm -rf PX4-Autopilot/build
 
 # Clone QADT 2026 repository
@@ -102,9 +103,6 @@ COPY .bashrc \
 # Make user 'qadt' own all files in home directory
 RUN chown -R qadt:qadt $HOME_DIR \
 	&& chmod +x $HOME_DIR/entrypoint.sh
-
-# Access to man packages. 'yes' answers the interactive prompts automatically
-RUN yes | unminimize && apt-get install -y man-db less
 
 # Switch to user and run entry point
 USER qadt

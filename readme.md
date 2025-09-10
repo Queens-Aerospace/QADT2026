@@ -2,7 +2,7 @@
 
 The purpose of this repository is to house all software associated with development environments, containers, computer vision, autonomy, and more.
 
-## Docker container setup
+## Docker container setup - Dual Boot
 
 [Install docker if not done already](https://docs.docker.com/engine/install/ubuntu/)
 
@@ -57,6 +57,14 @@ colcon build && source install/setup.sh
 To build all packages under the `QADT2026/ros_examples_cpp/src` directory. Then run `ros2 run [pkg_name] [executable_name]`. For example, in one terminal instance run, `ros2 run service_02 server`, and in another terminal instance run, `ros2 run service_02 client`.
 
 Feel free to experiment with the ROS2 examples.
+
+# Docker Container Setup - WSL
+
+Docker Desktop has native integration with WSL2. Meaning that the docker engine will attach to your WSL instance and you'll be able to access `docker` commands without having to install it in WSL.
+
+Ensure that you have WSL installed first, then go ahead and install [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/). Make sure to select the 
+
+
 
 # Software Execs
 
