@@ -72,12 +72,11 @@ RUN git clone --branch v2.4.3 https://github.com/eProsima/Micro-XRCE-DDS-Agent.g
 # Python dependencies in requirements.txt
 COPY px4_ubuntu.sh requirements.txt .
 RUN bash px4_ubuntu.sh \
-	&& pip3 install -r requirements.txt
+	&& pip3 install --no-cache-dir -r requirements.txt
 
 # Run the setup and build for PX4
-RUN git clone --branch v1.16.0 --single-branch https://github.com/PX4/PX4-Autopilot.git --depth 1 \
-	&& make -C PX4-Autopilot px4_sitl gz_x500 \
-	&& rm -rf PX4-Autopilot/build
+RUN git clone --single-branch --branch v1.16.0 https://github.com/PX4/PX4-Autopilot.git --recursive --depth 1 \
+	&& make -C PX4-Autopilot
 
 # Clone QADT 2026 repository
 RUN git clone https://github.com/Queens-Aerospace/QADT2026.git
@@ -97,6 +96,7 @@ RUN useradd -ms /bin/bash qadt && \
 # Copy files in the dockerfile's directory into the container
 COPY .bashrc \
 	.profile \
+	.tmux.conf \
 	entrypoint.sh \
 	.
 
