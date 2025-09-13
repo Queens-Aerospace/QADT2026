@@ -2,7 +2,6 @@
 
 # If not working, first do: sudo rm -rf /tmp/.docker.xauth
 # It still not working, try running the script as root.
-docker rm qadt_cont
 
 XAUTH=/tmp/.docker.xauth
 
@@ -37,6 +36,6 @@ docker run -it \
     --volume="$HOME:$HOME/mount" \
     --net=host \
     --privileged \
-    --gpus all \
-    --name qadt_cont \
-    qadt_image
+    # --gpus all \ # Unable to use for WSL
+    --name qadt-dev \
+    qadt-image
