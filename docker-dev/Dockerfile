@@ -81,7 +81,8 @@ RUN git clone --single-branch --branch v1.16.0 https://github.com/PX4/PX4-Autopi
 # Download QGroundControl
 RUN ARCH=$(arch) && \
 	curl https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-$ARCH.AppImage -O \
-	&& chmod +x QGroundControl-$ARCH.AppImage
+	&& chmod +x QGroundControl-$ARCH.AppImage \ 
+	&& apt install libfuse2 -y --no-install-recommends
 
 # Clone QADT 2026 repository
 RUN git clone https://github.com/Queens-Aerospace/QADT2026.git
