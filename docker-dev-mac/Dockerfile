@@ -70,19 +70,19 @@ RUN git clone --branch v2.4.3 https://github.com/eProsima/Micro-XRCE-DDS-Agent.g
 
 # Effectively copied 'px4_ubuntu.sh' from "bash ./Tools/setup/ubuntu.sh" above
 # Python dependencies in requirements.txt
-# COPY px4_ubuntu.sh requirements.txt .
-# RUN bash px4_ubuntu.sh \
-# 	&& pip3 install --no-cache-dir -r requirements.txt
+COPY px4_ubuntu.sh requirements.txt .
+RUN bash px4_ubuntu.sh \
+	&& pip3 install --no-cache-dir -r requirements.txt
 
 # # Run the setup and build for PX4
-# RUN git clone --single-branch --branch v1.16.0 https://github.com/PX4/PX4-Autopilot.git --recursive --depth 1 \
-# 	&& make -C PX4-Autopilot
+RUN git clone --single-branch --branch v1.16.0 https://github.com/PX4/PX4-Autopilot.git --recursive --depth 1 \
+	&& make -C PX4-Autopilot
 
-# # Download QGroundControl
-# RUN ARCH=$(arch) && \
-# 	curl https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-$ARCH.AppImage -O \
-# 	&& chmod +x QGroundControl-$ARCH.AppImage \ 
-# 	&& apt install libfuse2 -y --no-install-recommends
+# Download QGroundControl
+RUN ARCH=$(arch) && \
+	curl https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-$ARCH.AppImage -O \
+	&& chmod +x QGroundControl-$ARCH.AppImage \
+	&& apt-get install libfuse2 -y --no-install-recommends
 
 # Clone QADT 2026 repository
 RUN git clone https://github.com/Queens-Aerospace/QADT2026.git
