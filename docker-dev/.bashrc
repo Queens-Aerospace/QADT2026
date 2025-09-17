@@ -116,6 +116,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# ----- ADDED AS PART OF QADT DEV ENVIRONMENT -----
+
 export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@container\[\033[00m\]\[\033[01;37m\]:\[\033[01;34m\]\w\[\033[00m\]\[\033[01;37m\]\$ \[\033[00m\]'
 
 # ROS environment, colcon_cd and argcomplete, and colcon argcomplete setup.
