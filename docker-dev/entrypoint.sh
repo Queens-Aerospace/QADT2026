@@ -5,4 +5,5 @@ set -e
 
 # To execute command you want
 echo "==> Container ready"
+
 exec "$@"

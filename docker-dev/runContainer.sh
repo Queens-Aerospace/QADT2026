@@ -2,7 +2,6 @@
 
 # If not working, first do: sudo rm -rf /tmp/.docker.xauth
 # It still not working, try running the script as root.
-docker rm qadt_cont
 
 XAUTH=/tmp/.docker.xauth
 
@@ -16,27 +15,29 @@ if [ ! -f $XAUTH ]; then
     fi
     chmod a+r $XAUTH
 fi
-
 echo "Done."
-echo ""
+
 echo "Verifying file contents:"
 file $XAUTH
 echo "--> It should say \"X11 Xauthority data\"."
-echo ""
+
 echo "Permissions:"
 ls -FAlh $XAUTH
-echo ""
-echo "Running docker..."
+
+echo "Running docker container..."
+
+# Extra commands for 'docker run':
+#   --gpus all      Unable to use for WSL. Use with a native Linux installation. Not via WSL or running a
+#                   linux docker container on Mac.
 
 docker run -it \
+    -p 18570:18570/udp \
     --env="DISPLAY=$DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --volume="/dev:/dev" \
     --volume="/var/run/dbus/:/var/run/dbus/:z" \
-    --volume="/home/$USER:/home/$USER/mount" \
-    --net=host \
+    --volume="$HOME:$HOME/mount" \
     --privileged \
-    --gpus all \
-    --name qadt_cont \
-    qadt_image
+    --name qadt-dev \
+    qadt-image

@@ -70,7 +70,10 @@ RUN git clone --branch v2.4.3 https://github.com/eProsima/Micro-XRCE-DDS-Agent.g
 
 # Effectively copied 'px4_ubuntu.sh' from "bash ./Tools/setup/ubuntu.sh" above
 # Python dependencies in requirements.txt
-COPY px4_ubuntu.sh requirements.txt .
+COPY px4_ubuntu.sh \
+	requirements.txt \
+	./
+
 RUN bash px4_ubuntu.sh \
 	&& pip3 install --no-cache-dir -r requirements.txt
 
@@ -82,7 +85,7 @@ RUN git clone --single-branch --branch v1.16.0 https://github.com/PX4/PX4-Autopi
 RUN ARCH=$(arch) && \
 	curl https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-$ARCH.AppImage -O \
 	&& chmod +x QGroundControl-$ARCH.AppImage \ 
-	&& apt install libfuse2 -y --no-install-recommends
+	&& apt-get install libfuse2 -y --no-install-recommends
 
 # Clone QADT 2026 repository
 RUN git clone https://github.com/Queens-Aerospace/QADT2026.git
@@ -104,7 +107,7 @@ COPY .bashrc \
 	.profile \
 	.tmux.conf \
 	entrypoint.sh \
-	.
+	./
 
 # Make user 'qadt' own all files in home directory
 RUN chown -R qadt:qadt $HOME_DIR \
